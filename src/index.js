@@ -3,8 +3,6 @@ const express = require ("express");
 const mongoose = require ("mongoose");
 const bodyParser = require("body-parser");
 const route = require ("./routes/route");
-//const shortId = require ("shortid")
-//const validUrl = require ("valid-url");
 
 const validator = require("validator");
 const app = express();
