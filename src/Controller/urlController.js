@@ -8,16 +8,16 @@ const { promisify } = require("util");
 //Connect to redis
 
 const redisClient = redis.createClient(
-  12585,
-  "redis-12585.c264.ap-south-1-1.ec2.cloud.redislabs.com",
-  { no_ready_check: true }
+12585,
+"redis-12585.c264.ap-south-1-1.ec2.cloud.redislabs.com",
+{ no_ready_check: true }
 );
 redisClient.auth("vE1qSOHAonHuSiJcXqCczweY91aV7TN8", function (err) {
-  if (err) throw err;
+if (err) throw err;
 });
 
 redisClient.on("connect", async function () {
-  console.log("Connected to Redis..");
+console.log("Connected to Redis..");
 });
 
 //1. connect to the server
@@ -31,23 +31,23 @@ const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 //----------------createURL
 
 const urlShorten = async function (req, res) {
-  try {
+try {
     let data = req.body;
     let { longUrl } = data;
     if (!Object.keys(data).length)
-      return res
+    return res
         .status(400)
         .send({ status: false, message: "Please provide url to search" });
     //--------------------URL Validation
 
     if (!validator.isURL(longUrl))
-      return res.status(400).send({ status: false, message: "Not Valid Url" });
+    return res.status(400).send({ status: false, message: "Not Valid Url" });
 
     //----------------------DB Call
 
     let urlFind = await urlModel.findOne(
-      { longUrl },
-      { urlCode: 1, longUrl: 1, shortUrl: 1, _id: 0 }
+    { longUrl },
+    { urlCode: 1, longUrl: 1, shortUrl: 1, _id: 0 }
     );
     if (urlFind) return res.status(201).send({ status: true, data: urlFind });
     const baseUrl = `${req.protocol}://${req.headers.host}`;
@@ -58,9 +58,9 @@ const urlShorten = async function (req, res) {
     let result = await urlModel.create(url);
 
     return res.status(201).send({ status: true, data: url });
-  } catch (err) {
+} catch (err) {
     res.status(500).send({ status: false, error: err.message });
-  }
+}
 };
 
 //-------------------------getAPI
@@ -88,9 +88,9 @@ try {
     const findURL = await urlModel.findOne({ urlCode: req.params.urlCode });
     await SET_ASYNC(`${req.params.urlCode}`, findURL.longUrl);
     return res.status(302).redirect(findURL.longUrl);
-  } catch (err) {
+} catch (err) {
     return res.status(500).send({ status: false, error: err.message });
-  }
+}
 };
 
 //--------------------------Exports
