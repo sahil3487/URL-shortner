@@ -20,9 +20,6 @@ redisClient.on("connect", async function () {
 console.log("Connected to Redis..");
 });
 
-//1. connect to the server
-//2. use the commands :
-
 //Connection setup for redis
 
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
@@ -46,12 +43,12 @@ try {
     //----------------------DB Call
 
     let urlFind = await urlModel.findOne(
-    { longUrl },
-    { urlCode: 1, longUrl: 1, shortUrl: 1, _id: 0 }
+    { longUrl }
+    .select({ urlCode: 1, longUrl: 1, shortUrl: 1, _id: 0 })
     );
     if (urlFind) return res.status(201).send({ status: true, data: urlFind });
     const baseUrl = `${req.protocol}://${req.headers.host}`;
-    const urlCode = shortId.generate();
+    const urlCode = shortId.generate().toLowerCase();
     const shortUrl = baseUrl + "/" + urlCode;
     let url = { longUrl, shortUrl, urlCode };
 
